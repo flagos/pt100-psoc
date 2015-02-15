@@ -10,7 +10,6 @@
  * ========================================
 */
 #include <project.h>
-//#include <device.h>
 #include <stdio.h>
 #include "reglin.h"
 
@@ -38,21 +37,20 @@ int main()
 {
     /* Place your initialization/startup code here (e.g. MyInst_Start()) */
     /* Start the Components */
-    int32 mVolts;
     float uA_current_sampling_points[] = {250, 500};
     float uVolts_sampling_values[sizeof(uA_current_sampling_points)/sizeof(uA_current_sampling_points[0])];
     
     sys_init();
     
-    /* Start ISRs */
-    ADC_IRQ_StartEx(ADC_ISR_Handler);
-    
     /* Enable global interrupts */
     CyGlobalIntEnable;
 
+    /* Start ISRs */
+    ADC_IRQ_StartEx(ADC_ISR_Handler);
+    
     /* Start ADC conversion */
     ADC_StartConvert();
-    /* CyGlobalIntEnable; */ /* Uncomment this line to enable global interrupts. */
+
     for(;;)
     {
         int i=0;
@@ -104,7 +102,6 @@ int main()
 *
 ********************************************************************************/
 static float get_oversample() {
-    uint8 channel = CHANNEL_1;
     int16 adcVal[4u];
     float mVolts = 0;
     int i;

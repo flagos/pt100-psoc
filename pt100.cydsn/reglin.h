@@ -19,5 +19,6 @@ float pente(float Xi[],float Yi[],int N);
 float ordonnee(float a);
 float corr(float Yi[],float a,int N);
 void reglin(float Xi[],float Yi[],int N,float result[]);
+int sqrt_custom(int a_nInput);
 
 /* [] END OF FILE */
