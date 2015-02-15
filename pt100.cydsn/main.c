@@ -37,7 +37,7 @@ int main()
 {
     /* Place your initialization/startup code here (e.g. MyInst_Start()) */
     /* Start the Components */
-    float uA_current_sampling_points[] = {250, 500};
+    float uA_current_sampling_points[] = {100, 200, 300, 400, 500, 600};
     float uVolts_sampling_values[sizeof(uA_current_sampling_points)/sizeof(uA_current_sampling_points[0])];
     
     sys_init();
@@ -63,9 +63,8 @@ int main()
         }
         
         float result[3];
-        // reglin(uA_current_sampling_points, uVolts_sampling_values, nb_regression_sample, result);
+        reglin(uA_current_sampling_points, uVolts_sampling_values, nb_regression_sample, result);
         float mResistance = result[0]*1000; // resistance in milli ohms
-        mResistance = (uVolts_sampling_values[1]-uVolts_sampling_values[0])/(uA_current_sampling_points[1]-uA_current_sampling_points[0]) * 1000;
                 
         int32 temp = RTD_1_GetTemperature((int)mResistance);
 
