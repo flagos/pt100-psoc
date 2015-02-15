@@ -56,8 +56,9 @@ int main()
         int i=0;
         int nb_regression_sample = sizeof(uA_current_sampling_points)/sizeof(uA_current_sampling_points[0]);
         for (i=0; i < nb_regression_sample; i++){
-            uA_current_sampling_points[i] = (((int)uA_current_sampling_points[i]) / 2.4)*2.4; // resolution idac
-            Current_driver_SetValue(((int)uA_current_sampling_points[i]) / 2.4);
+            uA_current_sampling_points[i] = (int)(uA_current_sampling_points[i] / 2.4); // resolution idac
+            uA_current_sampling_points[i] *= 2.4;
+            Current_driver_SetValue((int)(uA_current_sampling_points[i] / 2.4));
             uVolts_sampling_values[i] = get_oversample()*1000;
         }
         
