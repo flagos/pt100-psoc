@@ -1,0 +1,7 @@
+*
+!.gitignore
+!main.c
+!pt100.cydwr
+!pt100.cyprj
+!reglin.c
+!reglin.h
