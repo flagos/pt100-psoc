@@ -52,9 +52,10 @@ int main()
 
     for(;;)
     {
-        AMux_adc_Select(1); 
-        AMux_current_Select(1);
-        
+        AMux_Select(1);
+        CyDelay(3000);
+        AMux_Select(0);
+        CyDelay(3000);
         
     }
     
@@ -164,9 +165,7 @@ static void sys_init()
     UART_Start();
     ADC_Start();   
     Current_driver_Start();
-    AMux_adc_Start();
-    AMux_current_Start();
-    
+    AMux_Start();    
 }
 
 
