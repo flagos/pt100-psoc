@@ -11,7 +11,6 @@
 */
 #include <project.h>
 #include <stdio.h>
-#include "reglin.h"
 
 /* Macro definitions */
 #define LOW                 (0u)
@@ -53,6 +52,14 @@ int main()
 
     for(;;)
     {
+        AMux_adc_Select(1); 
+        AMux_current_Select(1);
+        
+        
+    }
+    
+    for(;;)
+    {
         int i=0;
         int nb_regression_sample = sizeof(uA_current_sampling_points)/sizeof(uA_current_sampling_points[0]);
         for (i=0; i < nb_regression_sample; i++){
@@ -63,7 +70,6 @@ int main()
         }
         
         float result[3];
-        reglin(uA_current_sampling_points, uVolts_sampling_values, nb_regression_sample, result);
         float mResistance = result[0]*1000; // resistance in milli ohms
                 
         int32 temp = RTD_1_GetTemperature((int)mResistance);
@@ -158,6 +164,9 @@ static void sys_init()
     UART_Start();
     ADC_Start();   
     Current_driver_Start();
+    AMux_adc_Start();
+    AMux_current_Start();
+    
 }
 
 
