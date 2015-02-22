@@ -39,9 +39,6 @@ volatile uint8  channelFlag   = 0u;
 int main()
 {
     /* Place your initialization/startup code here (e.g. MyInst_Start()) */
-    /* Start the Components */
-    float uA_current_sampling_points[] = {100, 200, 300, 400, 500, 600};
-    float uVolts_sampling_values[sizeof(uA_current_sampling_points)/sizeof(uA_current_sampling_points[0])];
     
     sys_init();
     
@@ -57,54 +54,19 @@ int main()
     
     for(;;)
     {
-        AMux_1_Select(REF);
-        CyDelay(100);
-        float mVref = get_oversample();
-        
-        
-        AMux_1_Select(PT0);
-        CyDelay(100);
         float mVpt0 = get_oversample();
         
-        float res_pt0 = (mVpt0/mVref) * 132400; // res in mohms, tension in mV 
+        float mRpt0 = (mVpt0*(1000000)/(5000-mVpt0)) - 500 ; // res in mohms, tension in mV 
         
-        int32 temp_pt0 = RTD_1_GetTemperature((int)res_pt0);
+        int32 temp_pt0 = RTD_1_GetTemperature((int)mRpt0);
 
         char toto[1024];        
-        sprintf(toto, "mVref %d mVpt0 %d, resistance %d temperature:%d \r\n",(int)mVref, (int)mVpt0, (int)res_pt0, temp_pt0);
+        sprintf(toto, "mVpt0 %d, resistance %d temperature:%d \r\n",(int)mVpt0, (int)mRpt0, temp_pt0);
         UART_UartPutString(toto);
         CyDelay(200);
         
     }
     
-    for(;;)
-    {
-        int i=0;
-        int nb_regression_sample = sizeof(uA_current_sampling_points)/sizeof(uA_current_sampling_points[0]);
-        for (i=0; i < nb_regression_sample; i++){
-            uA_current_sampling_points[i] = (int)(uA_current_sampling_points[i] / 2.4); // resolution idac
-            uA_current_sampling_points[i] *= 2.4;
-            Current_driver_SetValue((int)(uA_current_sampling_points[i] / 2.4));
-            uVolts_sampling_values[i] = get_oversample()*1000;
-        }
-        
-        float result[3];
-        float mResistance = result[0]*1000; // resistance in milli ohms
-                
-        int32 temp = RTD_1_GetTemperature((int)mResistance);
-
-        char toto[1024];        
-        sprintf(toto, "current[0]: %d uA current[1]:%d uA tension[0]:%d uV tension[1]=%d uV resistance %d mOhms temperature %ld cC\r\n", 
-                (int)uA_current_sampling_points[0],
-                (int)uA_current_sampling_points[1],
-                (int)uVolts_sampling_values[0], 
-                (int)uVolts_sampling_values[1], 
-                (int)mResistance, 
-                temp);
-
-        UART_UartPutString(toto);
-        CyDelay(200);
-    }
 }
 
 
@@ -182,7 +144,6 @@ static void sys_init()
 {
     UART_Start();
     ADC_Start();   
-    AMux_1_Start();
 }
 
 
