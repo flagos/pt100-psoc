@@ -31,6 +31,10 @@ volatile uint8  dataReady     = 0u;
 volatile uint32 windowFlag    = 0u;
 volatile uint8  channelFlag   = 0u;
 
+ enum {
+ PT0,
+ REF
+};
 
 int main()
 {
@@ -50,12 +54,27 @@ int main()
     /* Start ADC conversion */
     ADC_StartConvert();
 
+    Current_driver_SetValue((int)(100/2.4)); // in µA
+    
     for(;;)
     {
-        AMux_Select(1);
-        CyDelay(3000);
-        AMux_Select(0);
-        CyDelay(3000);
+        AMux_Select(REF);
+        CyDelay(5000);
+        float mVref = get_oversample()*1000;
+        
+        AMux_Select(PT0);
+        CyDelay(5000);
+        float mVpt0 = get_oversample()*1000;
+        
+        float res_pt0 = (mVpt0/mVref);
+        res_pt0 *= 132400; 
+        
+        int32 temp_pt0 = RTD_1_GetTemperature((int)res_pt0);
+
+        char toto[1024];        
+        sprintf(toto, "mVref %d, mVpt0 %d, resistance %d temperature:%d \r\n", (int)mVref, (int)mVpt0, (int)res_pt0, temp_pt0);
+        UART_UartPutString(toto);
+        CyDelay(200);
         
     }
     
