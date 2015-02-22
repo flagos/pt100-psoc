@@ -54,25 +54,24 @@ int main()
     /* Start ADC conversion */
     ADC_StartConvert();
 
-    Current_driver_SetValue((int)(100/2.4)); // in µA
     
     for(;;)
     {
-        AMux_Select(REF);
-        CyDelay(5000);
-        float mVref = get_oversample()*1000;
+        AMux_1_Select(REF);
+        CyDelay(100);
+        float mVref = get_oversample();
         
-        AMux_Select(PT0);
-        CyDelay(5000);
-        float mVpt0 = get_oversample()*1000;
         
-        float res_pt0 = (mVpt0/mVref);
-        res_pt0 *= 132400; 
+        AMux_1_Select(PT0);
+        CyDelay(100);
+        float mVpt0 = get_oversample();
+        
+        float res_pt0 = (mVpt0/mVref) * 132400; // res in mohms, tension in mV 
         
         int32 temp_pt0 = RTD_1_GetTemperature((int)res_pt0);
 
         char toto[1024];        
-        sprintf(toto, "mVref %d, mVpt0 %d, resistance %d temperature:%d \r\n", (int)mVref, (int)mVpt0, (int)res_pt0, temp_pt0);
+        sprintf(toto, "mVref %d mVpt0 %d, resistance %d temperature:%d \r\n",(int)mVref, (int)mVpt0, (int)res_pt0, temp_pt0);
         UART_UartPutString(toto);
         CyDelay(200);
         
@@ -183,8 +182,7 @@ static void sys_init()
 {
     UART_Start();
     ADC_Start();   
-    Current_driver_Start();
-    AMux_Start();    
+    AMux_1_Start();
 }
 
 
